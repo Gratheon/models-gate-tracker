@@ -41,7 +41,8 @@ MODEL_SAVE_PATH = "SavedModel"
 
 # Load via TFDS
 if args.local_ds:
-    from BeeDataset.bee_dataset import BeeDataset
+    import tensorflow_datasets as tfds
+    from BeeDataset.bee_dataset import BeeDataset  # noqa: F401  registers the local dataset builder with tfds
     train, val = tfds.load('bee_dataset/bee_dataset_150',
                        batch_size=11,  # 100, #changed batch to load to Jetson Nano to avoid process kill
                        as_supervised=True,

@@ -7,21 +7,14 @@
 # @section authors Author(s)
 # - Created by Fabian Hickert on december 2020
 #
-import cv2
 import time
 import logging
 import queue
-import multiprocessing
 
-from Statistics import getStatistics
-from ImageProvider import ImageProvider
 from BeeDetection import detect_bees
-from BeeTracking import BeeTracker, BeeTrack
-from Utils import get_config, get_args
+from BeeTracking import BeeTracker
+from Utils import get_config
 from BeeProcess import BeeProcess
-
-if get_config("NN_ENABLE"):
-    from BeeClassification import BeeClassification
 
 from multiprocessing import Queue
 
@@ -95,7 +88,6 @@ class ImageConsumer(BeeProcess):
         _process_cnt = 0
         _lastProcessFPS = 0
         _start_t = time.time()
-        writer = None
 
         # Create a Bee Tracker
         statistics = context['stats']
@@ -105,8 +97,8 @@ class ImageConsumer(BeeProcess):
         # Create statistics object
         # statistics = getStatistics()
 
-        if type(i_q) == type(None):
-            raise("No image queue provided!")
+        if i_q is None:
+            raise ValueError("No image queue provided!")
 
         while stopped.value == 0:
 
@@ -122,7 +114,7 @@ class ImageConsumer(BeeProcess):
                     # Transfer results to the track
                     trackId, result = c_q.get()
                     track = tracker.getTrackById(trackId)
-                    if type(track) != type(None):
+                    if track is not None:
                         track.imageClassificationComplete(result)
                     else:
                         statistics.addClassificationResult(trackId, result)
@@ -154,13 +146,13 @@ class ImageConsumer(BeeProcess):
                 # Scale is 2 because detection was made on img_540 but cutting is on img_1080
                 if get_config("ENABLE_IMAGE_EXTRACTION"):
                     data = tracker.getLastBeePositions(get_config("EXTRACT_FAME_STEP"))
-                    if len(data) and type(e_q) != type(None):
+                    if len(data) and e_q is not None:
                         if get_config("NN_EXTRACT_RESOLUTION") == "EXT_RES_150x300":
                             e_q.put((data, img_1080, 2, _process_cnt))
                         elif get_config("NN_EXTRACT_RESOLUTION") == "EXT_RES_75x150":
                             e_q.put((data, img_540, 1, _process_cnt))
                         else:
-                            raise("Unknown setting for EXT_RES_75x150, expected EXT_RES_150x300 or EXT_RES_75x150")
+                            raise ValueError("Unknown setting for EXT_RES_75x150, expected EXT_RES_150x300 or EXT_RES_75x150")
 
                 # Draw the results if enabled
                 if get_config("VISUALIZATION_ENABLED"):

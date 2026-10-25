@@ -11,11 +11,7 @@ import time
 import logging
 import cv2
 import multiprocessing
-import datetime
-import queue
 from Utils import get_config, get_args
-from BeeTracking import BeeTracker, BeeTrack
-from multiprocessing import Queue
 from BeeProcess import BeeProcess
 
 logger = logging.getLogger(__name__)
@@ -48,6 +44,7 @@ class Visual(BeeProcess):
         _process_cnt = 0
         _process_time_n100 = time.time()
         _lastFPS = 0
+        writer = None
 
         while stopped.value == 0:
             if not in_q.empty():
@@ -98,7 +95,7 @@ class Visual(BeeProcess):
 
                 # Save as Video
                 if get_config("SAVE_AS_VIDEO"):
-                    if type(writer) == type(None):
+                    if writer is None:
                         h, w, c = img_540.shape
 
                         #TODO: Set real Framerate from video input or from video stream

@@ -40,7 +40,7 @@ class BeeProcess(object):
         # Wait for process to stop
 
         self._stopped.value = 1
-        for i in range(100):
+        for _ in range(100):
             if self._done.value == 1:
                 break
             time.sleep(0.01)
@@ -48,12 +48,12 @@ class BeeProcess(object):
             logger.warn("Terminating process after waiting 1s for gracefull shutdown!")
             self._process.terminate()
 
-        for qn,q in self._process_params.items():
+        for q in self._process_params.values():
             if q is not None:
                 try:
                     while not q.empty():
                         q.get()
-                except:
+                except Exception:
                     pass
 
     def join(self):
@@ -75,7 +75,7 @@ class BeeProcess(object):
         done = args["done"]
         try:
             parent.run(**args)
-        except KeyboardInterrupt as ki:
+        except KeyboardInterrupt:
             logger.debug(">> Received KeyboardInterrupt")
 
         stopped.value = 1

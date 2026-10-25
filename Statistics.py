@@ -8,7 +8,6 @@
 # - Created by Fabian Hickert on december 2020
 #
 import json
-from collections import deque
 # import redis
 
 class Statistics(object):
@@ -174,7 +173,7 @@ def getStatistics():
     # @return The statistics instance
     # """
     # global __dh
-    # if __dh == None:
+    # if __dh is None:
     #     __dh = Statistics()
 
     # return __dh
