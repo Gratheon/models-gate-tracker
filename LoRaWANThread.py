@@ -58,7 +58,7 @@ class LoRaWANThread(Thread):
         if self._ser:
             try:
                 self._ser.close()
-            except:
+            except Exception:
                 pass
 
         # Put the transeiver into a defined state
@@ -163,7 +163,7 @@ class LoRaWANThread(Thread):
                 time.sleep(0.01)
 
         # Close the serial connection
-        if self._ser != None:
+        if self._ser is not None:
             self._ser.close()
 
         # Thread stopped

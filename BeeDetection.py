@@ -90,9 +90,9 @@ def detect_bees(frame, scale):
                     group.append(b)
 
                 # Remember which ellipses were processed
-                if not a in skip:
+                if a not in skip:
                     skip.append(a)
-                if not b in skip:
+                if b not in skip:
                     skip.append(b)
 
         # Isolate the ellipse with the biggest area

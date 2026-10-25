@@ -44,10 +44,10 @@ class ImageProvider(BeeProcess):
 
         # Ensure that each item of the frame config has the same size or less as the previous one
         for num, item in enumerate(frame_config):
-            if type(item[0]) != int:
+            if not isinstance(item[0], int):
                 raise BaseException("Expected item 1 of frame_config %i to be integer" % (num+1,))
-            if type(item[1]) != int:
-                raise BaseException("Expected item 2 of frame_config to be integer" % (num+1,))
+            if not isinstance(item[1], int):
+                raise BaseException("Expected item 2 of frame_config %i to be integer" % (num+1,))
             if item[2] not in (cv2.IMREAD_COLOR, cv2.IMREAD_GRAYSCALE, cv2.IMREAD_UNCHANGED):
                 raise BaseException("Expected item 3 of frame_config to be one of cv2.IMREAD_COLOR, cv2.IMREAD_GRAYSCALE, cv2.IMREAD_UNCHANGED")
 
@@ -88,7 +88,7 @@ class ImageProvider(BeeProcess):
     @staticmethod
     def run(q_out, config, video_source, video_file, parent, stopped, done):
         try:
-            if video_source == None:
+            if video_source is None:
                 logger.info("Starting from video file input: %s" % (video_file,))
                 # use HW acceleration for video file
                 if get_config("USE_GSTREAM"):
@@ -104,12 +104,12 @@ class ImageProvider(BeeProcess):
                 logger.info("Starting from camera input")
                 _videoStream = cv2.VideoCapture(video_source)
                 w, h, f = get_config("CAMERA_INPUT_RESOLUTION")
-                if f != None:
+                if f is not None:
                     fourcc = cv2.VideoWriter_fourcc(*f)
                     _videoStream.set(cv2.CAP_PROP_FOURCC, fourcc)
-                if w != None:
+                if w is not None:
                     _videoStream.set(cv2.CAP_PROP_FRAME_WIDTH,  int(w))
-                if h != None:
+                if h is not None:
                     _videoStream.set(cv2.CAP_PROP_FRAME_HEIGHT, int(h))
 
             _process_time = 0

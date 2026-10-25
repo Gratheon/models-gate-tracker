@@ -13,9 +13,8 @@ import time
 import logging
 import cv2
 import queue
-import multiprocessing
 import datetime
-from os.path import join, exists
+from os.path import exists
 from os import makedirs
 from BeeProcess import BeeProcess
 
@@ -47,8 +46,8 @@ class ImageExtractor(BeeProcess):
     def start(self):
         """! Starts the image extraction process
         """
-        if type(self._inQueue) == type(None):
-            raise("Please provide a classifier queue!")
+        if self._inQueue is None:
+            raise ValueError("Please provide a classifier queue!")
 
         # Start the process
         super().start()
@@ -98,7 +97,7 @@ class ImageExtractor(BeeProcess):
 
                     # Check result, in some cases the result may be None
                     #  e.g. when the bee is close to the image border
-                    if type(img) != type(None):
+                    if img is not None:
 
                         # Filter by minimum sharpness
                         if sharpness > get_config("EXTRACT_MIN_SHARPNESS"):

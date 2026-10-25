@@ -21,7 +21,7 @@ import logging
 import random
 
 from Statistics import getStatistics
-from Utils import loadWomanNames, variance_of_laplacian, pointInEllipse, get_config
+from Utils import loadWomanNames, pointInEllipse, get_config
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +162,7 @@ class BeeTracker(object):
 
         # Create random track colors
         self.track_colors = []
-        for i in range(get_config("TRACK_COLOR_COUNT")):
+        for _ in range(get_config("TRACK_COLOR_COUNT")):
             self.track_colors.append((random.randint(100,255),
                 random.randint(100,255),
                 random.randint(100,255)))
@@ -238,11 +238,11 @@ class BeeTracker(object):
                     v_py = int(l_p[4])*10 + l_py
                     a_py = int(l_p[5])*10 + l_py
 
-                    if DRAW_VELOCITY:
+                    if get_config("DRAW_VELOCITY"):
                         cv2.line(frame, (l_px, l_py), (v_px, v_py), (255,255,255), 4)
                         cv2.line(frame, (l_px, l_py), (v_px, v_py), t_c, 2)
 
-                    if DRAW_ACCELERATION:
+                    if get_config("DRAW_ACCELERATION"):
                         cv2.line(frame, (l_px, l_py), (a_px, a_py), (255,255,255), 8)
                         cv2.line(frame, (l_px, l_py), (a_px, a_py), t_c, 6)
 
@@ -306,7 +306,7 @@ class BeeTracker(object):
             f_y = track.first_position[1]
 
             # Y-Position of last detection
-            l_y = lastPosition = track.trace[-1][1]
+            l_y = track.trace[-1][1]
 
             # Half of pane height
             pH = int(self._frame_height / 2)
@@ -416,7 +416,7 @@ class BeeTracker(object):
             # This is a new track, it cannot make predictions about where the bee will go
             # Double the detection range
             if track.processed_frames > track.skipped_frames:
-                distance = self.dist_threshold *2
+                distance = self.dist_threshold *2  # noqa: F841  TODO: never used below, the doubled threshold has no effect
 
             # This track recently missed some detections, but had a solid track before.
             # Double the detection range
@@ -425,8 +425,9 @@ class BeeTracker(object):
 
             # This Track is inside of a bee-group, so it cannot be detected
             # As we can only assume were the bee is going, double the distance
+            # TODO: `distance` is never used below, so the doubled threshold has no effect
             if track.in_group:
-                distance = self.dist_threshold *2
+                distance = self.dist_threshold *2  # noqa: F841
 
             by_dist = list(filter(lambda x: x[0] < self.dist_threshold, per_track))
 

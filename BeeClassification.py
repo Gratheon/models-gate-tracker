@@ -71,10 +71,6 @@ class BeeClassification(BeeProcess):
 
         # Include tensorflow within the process
         import tensorflow as tf
-        from tensorflow import keras
-        from tensorflow.keras import layers
-        from tensorflow.keras.models import Sequential
-        from tensorflow.keras import layers
 
         _process_time = 0
         _process_cnt = 0
@@ -83,7 +79,7 @@ class BeeClassification(BeeProcess):
         config = tf.compat.v1.ConfigProto()
         config.gpu_options.allow_growth = True
         config.gpu_options.per_process_gpu_memory_fraction = 0.75  # added to limit GPU memory usage
-        session = tf.compat.v1.InteractiveSession(config=config)
+        _session = tf.compat.v1.InteractiveSession(config=config)
 
         # Load the model
         try:
@@ -144,7 +140,6 @@ class BeeClassification(BeeProcess):
                 tracks = []
 
                 # Load the images from the in-queue and prepare them for the use in the network
-                failed = False
                 while len(images) < 5 and stopped.value == 0:
                     try:
                         item = q_in.get(block=False)
@@ -152,7 +147,7 @@ class BeeClassification(BeeProcess):
                         item = None
                         break
 
-                    if not item is None:
+                    if item is not None:
                         t, img, frame_id = item
                         # Change color from BGR to RGB
                         images_orig.append(img)

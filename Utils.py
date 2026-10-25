@@ -11,7 +11,6 @@
 import math
 import imutils
 import cv2
-import csv
 import yaml
 import argparse
 
@@ -46,7 +45,7 @@ def loadWomanNames():
     """! Loads the bee names from 'Namen/Namen.list' and returns them as list
     """
     global _woman_names
-    if type(_woman_names) == type(None):
+    if _woman_names is None:
         _woman_names = []
         with open('Names/Vornamen_2018_Koeln.csv', encoding="utf8", errors="ignore") as _file:
             _woman_names = _file.readlines()
@@ -90,7 +89,7 @@ def cutEllipseFromImage(el, img, pad, scale=1):
         w = 75
         h = 150
     else:
-        raise("Unknown setting for EXT_RES_75x150, expected EXT_RES_150x300 or EXT_RES_75x150")
+        raise ValueError("Unknown setting for EXT_RES_75x150, expected EXT_RES_150x300 or EXT_RES_75x150")
 
     # Calcuate the size of an image the covers the rotated ellipse
     ga = (math.pi) / 180 * angle
@@ -129,7 +128,7 @@ def cutEllipseFromImage(el, img, pad, scale=1):
         crop_value = 0.4
         s0 = int((crop_img2.shape[0] -h + crop_value * h) / 2)
         s1 = int((crop_img2.shape[1] -w + crop_value * w) / 2)
-    except:
+    except Exception:
         return None, None
 
     # Get the center of the resulting iamge to perform sharpness tests

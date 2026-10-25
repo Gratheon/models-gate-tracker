@@ -1,23 +1,19 @@
 #!/usr/bin/env python3
 import json
-import multiprocessing
 from ImageProvider import ImageProvider
 from ImageConsumer import ImageConsumer
 from ImageExtractor import ImageExtractor
 from LoRaWANThread import LoRaWANThread
 from Visual import Visual
-from Utils import get_args, get_config
+from Utils import get_config
 import logging
 import time
-import sys
 from Statistics import getStatistics
 
-from multiprocessing import Process, Value, Array
+from multiprocessing import Array
 
-import queue
 import os
 import cgi
-import time
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 
 # Only load neural network if needed. the overhead is quite large
